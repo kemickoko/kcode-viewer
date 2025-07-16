@@ -1,61 +1,70 @@
-import { useState } from 'react';
-import './App.css';
+import { useState } from "react";
 
-type CodeEntry = {
+type Procedure = {
   code: string;
   name: string;
-  point: number;
+  point_code: string;
+  note1: string;
+  note2: string;
 };
 
-const MOCK_DATA: CodeEntry[] = [
-  { code: 'K719', name: '鼠径ヘルニア手術', point: 1240 },
-  { code: 'K721', name: '大腿ヘルニア手術', point: 1350 },
-  { code: 'K719-2', name: '内視鏡下鼠径ヘルニア手術', point: 2400 },
-];
-
 function App() {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState<CodeEntry[]>([]);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<Procedure[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleSearch = () => {
-    // 実際はAPIを叩く予定だが、今はダミーでフィルター
-    const filtered = MOCK_DATA.filter(entry =>
-      entry.name.includes(query) || entry.code.includes(query)
-    );
-    setResults(filtered);
+  const handleSearch = async () => {
+    if (!query) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`http://localhost:8000/search?q=${encodeURIComponent(query)}`);
+      if (!res.ok) throw new Error("API error");
+      const data: Procedure[] = await res.json();
+      setResults(data);
+    } catch (e) {
+      console.error(e);
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h1>診療報酬コードビューア</h1>
-
+    <div style={{ padding: 20 }}>
+      <h1>診療報酬コード検索</h1>
       <input
         type="text"
+        placeholder="検索語を入力"
         value={query}
-        onChange={e => setQuery(e.target.value)}
-        placeholder="例: ヘルニア, K719"
-        style={{ padding: '0.5rem', width: '300px', marginRight: '1rem' }}
+        onChange={(e) => setQuery(e.target.value)}
+        style={{ padding: 8, width: 300, marginRight: 8 }}
       />
-      <button onClick={handleSearch}>検索</button>
+      <button onClick={handleSearch} disabled={loading}>
+        {loading ? "検索中..." : "検索"}
+      </button>
 
-      <div style={{ marginTop: '2rem' }}>
+      <div style={{ marginTop: 20 }}>
         {results.length === 0 ? (
-          <p>該当なし</p>
+          <p>検索結果なし</p>
         ) : (
-          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+          <table border={1} cellPadding={8} style={{ borderCollapse: "collapse", width: "100%" }}>
             <thead>
               <tr>
-                <th style={{ border: '1px solid #ccc', padding: '0.5rem' }}>コード</th>
-                <th style={{ border: '1px solid #ccc', padding: '0.5rem' }}>名称</th>
-                <th style={{ border: '1px solid #ccc', padding: '0.5rem' }}>点数</th>
+                <th>コード</th>
+                <th>名称</th>
+                <th>点数</th>
+                <th>注記1</th>
+                <th>注記2</th>
               </tr>
             </thead>
             <tbody>
-              {results.map(entry => (
-                <tr key={entry.code}>
-                  <td style={{ border: '1px solid #ccc', padding: '0.5rem' }}>{entry.code}</td>
-                  <td style={{ border: '1px solid #ccc', padding: '0.5rem' }}>{entry.name}</td>
-                  <td style={{ border: '1px solid #ccc', padding: '0.5rem' }}>{entry.point}</td>
+              {results.map((r) => (
+                <tr key={r.code}>
+                  <td>{r.code}</td>
+                  <td>{r.name}</td>
+                  <td></td>
+                  <td>{r.note1}</td>
+                  <td>{r.note2}</td>
                 </tr>
               ))}
             </tbody>
