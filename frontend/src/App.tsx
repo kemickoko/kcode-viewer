@@ -28,49 +28,69 @@ function App() {
       setLoading(false);
     }
   };
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // ページリロード防止
+    handleSearch();
+  };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>診療報酬コード検索</h1>
-      <input
-        type="text"
-        placeholder="検索語を入力"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        style={{ padding: 8, width: 300, marginRight: 8 }}
-      />
-      <button onClick={handleSearch} disabled={loading}>
-        {loading ? "検索中..." : "検索"}
-      </button>
+    <div className="max-w-full sm:max-w-6xl mx-auto p-4 sm:p-6 bg-gray-50 min-h-screen">
+      <h1 className="text-3xl sm:text-4xl font-bold text-blue-700 mb-6 text-center sm:text-left">
+        診療報酬コード検索
+      </h1>
 
-      <div style={{ marginTop: 20 }}>
-        {results.length === 0 ? (
-          <p>検索結果なし</p>
-        ) : (
-          <table border={1} cellPadding={8} style={{ borderCollapse: "collapse", width: "100%" }}>
-            <thead>
+      <div className="flex flex-col sm:flex-row mb-6 gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row mb-6 gap-4">
+          <input
+            type="text"
+            placeholder="例：創傷、K000"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full sm:flex-grow px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500"
+          />
+          <button
+            onClick={handleSearch}
+            type="submit"
+            disabled={loading}
+            className={`w-full sm:w-auto px-6 py-3 rounded-md font-semibold text-white shadow-md transition-colors
+              ${loading ? "bg-blue-300 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 active:bg-blue-800"}`}
+          >
+            {loading ? "検索中…" : "検索"}
+          </button>
+        </form>
+      </div>
+
+      {results.length === 0 ? (
+        <p className="text-center text-gray-500 mt-4">検索結果がありません</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full border border-gray-300 rounded-lg divide-y divide-gray-200">
+            <thead className="bg-blue-50">
               <tr>
-                <th>コード</th>
-                <th>名称</th>
-                <th>点数</th>
-                <th>注記1</th>
-                <th>注記2</th>
+                {["コード", "名称", "点数コード", "注記1", "注記2"].map((header) => (
+                  <th
+                    key={header}
+                    className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-blue-600 uppercase tracking-wider"
+                  >
+                    {header}
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="bg-white divide-y divide-gray-200">
               {results.map((r) => (
-                <tr key={r.code}>
-                  <td>{r.code}</td>
-                  <td>{r.name}</td>
-                  <td></td>
-                  <td>{r.note1}</td>
-                  <td>{r.note2}</td>
+                <tr key={r.code + r.point_code} className="hover:bg-blue-50">
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{r.code}</td>
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{r.name}</td>
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{r.point_code}</td>
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{r.note1}</td>
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{r.note2}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
