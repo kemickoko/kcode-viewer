@@ -1,13 +1,6 @@
 import { useState } from "react";
 import { kcodes } from "./data/kcodes";
-
-type Procedure = {
-  code: string;
-  name: string;
-  point_code: string;
-  note1: string | null;
-  note2: string | null;
-};
+import type { Procedure } from "./types";
 
 function App() {
   const [query, setQuery] = useState("");
