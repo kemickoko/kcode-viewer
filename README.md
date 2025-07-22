@@ -14,7 +14,11 @@
 GithubPagesにデプロイしてくれます。
 
 csvの1行目は、
+
+``` csv
 code,name,stem_code,note
+```
+
 である必要があります。
 
 [Kコード検索](https://kemickoko.github.io/kcode-viewer/)
