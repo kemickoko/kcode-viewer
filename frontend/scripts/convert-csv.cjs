@@ -13,9 +13,8 @@ const normalized = data
   .map((row) => ({
     code: row.code,
     name: row.name,
-    point_code: row.point_code === "" ? null : row.point_code,
-    note1: row.note1 === "" ? null : row.note1,
-    note2: row.note2 === "" ? null : row.note2,
+    stem_code: row.stem_code === "" ? null : row.stem_code,
+    note: row.note === "" ? null : row.note,
   }));
 
 const json = JSON.stringify(normalized, null, 2);

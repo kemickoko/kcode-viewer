@@ -16,10 +16,10 @@ function App() {
       return;
     }
 
-    // 小文字化して部分一致検索（code, name, note1, note2 対象）
+    // 小文字化して部分一致検索（code, name, note  対象）
     const q = query.toLowerCase();
     const matched = kcodes.filter((item) =>
-      [item.code, item.name, item.point_code, item.note1, item.note2]
+      [item.code, item.name, item.stem_code, item.note]
         .filter((field): field is string => typeof field === "string")
         .some((field) => field.toLowerCase().includes(q))
     );
@@ -66,7 +66,7 @@ function App() {
             <table className="min-w-full border border-gray-300 rounded-lg divide-y divide-gray-200">
               <thead className="bg-blue-50">
                 <tr>
-                  {["コード", "名称", "点数コード", "注記1", "注記2"].map((header) => (
+                  {["コード", "診療報酬術式名", "試案コード", "注記"].map((header) => (
                     <th
                       key={header}
                       className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-blue-600 uppercase tracking-wider"
@@ -78,12 +78,11 @@ function App() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {results.map((r) => (
-                  <tr key={r.code + r.point_code} className="hover:bg-blue-50">
+                  <tr key={r.code + r.stem_code} className="hover:bg-blue-50">
                     <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{r.code}</td>
                     <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{r.name}</td>
-                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{r.point_code}</td>
-                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{r.note1}</td>
-                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{r.note2}</td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{r.stem_code}</td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{r.note}</td>
                   </tr>
                 ))}
               </tbody>
