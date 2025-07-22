@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { kcodes } from "./data/kcodes";
 
 type Procedure = {
   code: string;
   name: string;
   point_code: string;
-  note1: string;
-  note2: string;
+  note1: string | null;
+  note2: string | null;
 };
 
 function App() {
@@ -13,21 +14,22 @@ function App() {
   const [results, setResults] = useState<Procedure[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
     if (!query) return;
     setLoading(true);
-    try {
-      const res = await fetch(`http://localhost:8000/search?q=${encodeURIComponent(query)}`);
-      if (!res.ok) throw new Error("API error");
-      const data: Procedure[] = await res.json();
-      setResults(data);
-    } catch (e) {
-      console.error(e);
-      setResults([]);
-    } finally {
-      setLoading(false);
-    }
+
+    // 小文字化して部分一致検索（code, name, note1, note2 対象）
+    const q = query.toLowerCase();
+    const matched = kcodes.filter((item) =>
+      [item.code, item.name, item.point_code, item.note1, item.note2]
+        .filter(Boolean)
+        .some((field) => field!.toLowerCase().includes(q))
+    );
+
+    setResults(matched);
+    setLoading(false);
   };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // ページリロード防止
     handleSearch();
