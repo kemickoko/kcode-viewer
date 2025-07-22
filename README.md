@@ -1,4 +1,4 @@
-# React + TypeScript + Vite + GithubPages + GithubActions
+# Kコード検索アプリ
 
 ## 使用技術
 
