@@ -13,6 +13,12 @@
 診療報酬改定時にfrontend/data/内のcsvファイルを更新してmainにpushすると、自動でtsファイルに変換し、
 GithubPagesにデプロイしてくれます。
 
-csv内の形式は、
-code,name,point_code,note1,note2
+csvの1行目は、
+
+``` csv
+code,name,stem_code,note
+```
+
 である必要があります。
+
+[Kコード検索](https://kemickoko.github.io/kcode-viewer/)
