@@ -8,8 +8,13 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   const handleSearch = () => {
-    if (!query) return;
     setLoading(true);
+  
+    if (!query) {
+      setResults(kcodes); // 🔸検索文字なし → 全件表示
+      setLoading(false);
+      return;
+    }
 
     // 小文字化して部分一致検索（code, name, note1, note2 対象）
     const q = query.toLowerCase();
